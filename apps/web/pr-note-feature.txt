@@ -1,0 +1,6 @@
+SRRU UI redesign — feature PR note
+
+This small file is added specifically to `feature/validation-upload-tests`
+to ensure there is a commit difference versus `main` and allow opening a PR.
+
+Temporary file for PR generation; please ignore in review.
