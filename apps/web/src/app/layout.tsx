@@ -26,9 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen font-sans antialiased text-[var(--foreground)] bg-[var(--background)]`}
-      >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen font-sans antialiased text-[var(--foreground)] bg-[var(--background)]`}>
         <SiteNav />
         <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
       </body>
