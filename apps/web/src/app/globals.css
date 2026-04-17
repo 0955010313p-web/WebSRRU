@@ -4,6 +4,68 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+@import "tailwindcss";
+
+/* Design tokens for SRRU minimalist theme */
+:root {
+  --background: #ffffff;
+  --foreground: #0b1220;
+
+  --srru-green: #1F8A4C;
+  --srru-green-dark: #166936;
+  --srru-green-10: #ECF9F0;
+  --srru-purple: #6B3FA0;
+  --srru-purple-10: #F5F0FB;
+  --srru-yellow: #F6C84C;
+  --srru-surface: #F8FAFC;
+  --srru-muted: #6B7280;
+
+  --motion-short: 120ms;
+  --motion-medium: 180ms;
+
+  --font-heading: 'Sarabun', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
+  --font-body: 'Sarabun', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-heading);
+}
+
+/* Respect user preference for reduced motion, but default to light theme */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Micro-interaction utilities */
+.ui-btn {
+  transition: transform var(--motion-short) ease, box-shadow var(--motion-short) ease, background-color var(--motion-short) ease;
+}
+.ui-btn:active { transform: scale(0.985); }
+.ui-card { transition: transform var(--motion-medium) ease, box-shadow var(--motion-medium) ease; }
+.ui-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(11,15,30,0.06); }
+
+:where(:focus, :focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--srru-green) 60%, transparent);
+  outline-offset: 3px;
+}
+
+.muted-text { color: var(--srru-muted); }
+.brand-link { color: var(--srru-purple); }
+.brand-link:hover { text-decoration: underline; }
+
+/* Small helpers for layout */
+.page-container { max-width: 980px; margin: 0 auto; padding: 1rem; }
 
 @theme inline {
   --color-background: var(--background);
