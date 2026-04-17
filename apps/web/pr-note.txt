@@ -1,0 +1,7 @@
+SRRU UI redesign — small PR note
+
+This file is intentionally small and ASCII-only to force a git diff
+so the pull request from `feature/validation-upload-tests` -> `main`
+can be created for review.
+
+Ignore this file; it's a temporary PR facilitator.
