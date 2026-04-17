@@ -1,0 +1,7 @@
+SRRU UI update — helper file
+
+This file was added by automation to create a small commit so a review PR
+can be opened from `feature/validation-upload-tests` into `main`.
+
+Note: Core UI changes were prepared in the workspace; please confirm if you
+want those copied into the repo before merging.
