@@ -1,0 +1,251 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  COORDINATOR
+  ADMIN
+  EXECUTIVE
+}
+
+enum StudentType {
+  REGULAR
+  SPECIAL
+}
+
+enum ActivityCategory {
+  CULTURE
+  ACADEMIC
+  SPORTS
+  VOLUNTEERING
+  ETHICS
+}
+
+enum ActivityNature {
+  CORE_REQUIRED
+  ELECTIVE_REQUIRED
+}
+
+enum ActivityLevel {
+  UNIVERSITY
+  FACULTY
+}
+
+enum ActivityStatus {
+  DRAFT
+  PUBLISHED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String    @map("password_hash")
+  role         Role      @default(STUDENT)
+  email        String?
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  student              Student?
+  activitiesSupervised Activity[]        @relation("ActivitySupervisor")
+  creditTransfers      CreditTransfer[]  @relation("CreditApprover")
+  auditLogs            AuditLog[]
+}
+
+model Student {
+  id           String      @id @default(cuid())
+  userId       String      @unique @map("user_id")
+  studentCode  String      @unique @map("student_code")
+  firstName    String      @map("first_name")
+  lastName     String      @map("last_name")
+  faculty      String
+  major        String
+  yearLevel    Int         @map("year_level")
+  studentType  StudentType @map("student_type")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  deletedAt    DateTime?   @map("deleted_at")
+
+  certificates   Certificate[]
+
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  registrations      Registration[]
+  creditTransfers      CreditTransfer[]
+  specialHourRequests  SpecialHourRequest[]
+}
+
+model Activity {
+  id              String           @id @default(cuid())
+  title           String
+  description     String           @db.Text
+  category        ActivityCategory
+  nature          ActivityNature
+  level           ActivityLevel
+  isMakeup        Boolean          @default(false) @map("is_makeup")
+  hours           Int
+  maxParticipants Int?             @map("max_participants")
+  startTime       DateTime         @map("start_time")
+  endTime         DateTime         @map("end_time")
+  status          ActivityStatus   @default(DRAFT)
+  qrSecret        String           @unique @default(cuid()) @map("qr_secret")
+  supervisorId    String           @map("supervisor_id")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  deletedAt       DateTime?        @map("deleted_at")
+
+  supervisor    User           @relation("ActivitySupervisor", fields: [supervisorId], references: [id])
+  registrations Registration[]
+  
+  @@index([supervisorId])
+}
+
+model Registration {
+  id           String             @id @default(cuid())
+  studentId    String             @map("student_id")
+  activityId   String             @map("activity_id")
+  status       RegistrationStatus @default(PENDING)
+  registeredAt DateTime           @default(now()) @map("registered_at")
+  proofPath    String?            @map("proof_path")
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+  deletedAt    DateTime?          @map("deleted_at")
+
+  student      Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  activity     Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  attendances  Attendance[]
+  amendments   AmendmentRequest[]
+
+  @@unique([studentId, activityId])
+  @@index([activityId])
+  @@index([studentId])
+}
+
+model Attendance {
+  id             String           @id @default(cuid())
+  registrationId String           @map("registration_id")
+  checkInTime    DateTime         @map("check_in_time")
+  proofImagePath String?          @map("proof_image_path")
+  status         AttendanceStatus @default(PENDING_APPROVAL)
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+}
+
+model CreditTransfer {
+  id              String   @id @default(cuid())
+  studentId       String   @map("student_id")
+  title           String
+  hoursGranted    Int      @map("hours_granted")
+  grantedCategory String   @map("granted_category")
+  approvedById    String   @map("approved_by_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  student    Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  approvedBy User    @relation("CreditApprover", fields: [approvedById], references: [id])
+  
+  @@index([studentId])
+  @@index([approvedById])
+}
+
+model AmendmentRequest {
+  id             String        @id @default(cuid())
+  registrationId String        @map("registration_id")
+  reason         String        @db.Text
+  proofPath      String?       @map("proof_path")
+  status         RequestStatus @default(PENDING)
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+model SpecialHourRequest {
+  id          String        @id @default(cuid())
+  studentId   String        @map("student_id")
+  title       String
+  description String        @db.Text
+  proofPath   String?       @map("proof_path")
+  hoursAsked  Int           @map("hours_asked")
+  status      RequestStatus @default(PENDING)
+  decidedHours Int?         @map("decided_hours")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([studentId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  action    String
+  entity    String
+  entityId  String?  @map("entity_id")
+  meta      Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+}
+
+model NotificationLog {
+  id        String   @id @default(cuid())
+  toEmail   String   @map("to_email")
+  subject   String
+  body      String   @db.Text
+  sentAt    DateTime @default(now()) @map("sent_at")
+  success   Boolean  @default(true)
+}
+
+model Certificate {
+  id                String   @id @default(cuid())
+  studentId         String   @map("student_id")
+  certificateNumber String   @unique @map("certificate_number")
+  issueDate         DateTime @default(now()) @map("issue_date")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  @@index([studentId])
+}

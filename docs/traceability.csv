@@ -1,0 +1,10 @@
+requirement,frontend,backend,db,status
+Registration,apps/web/src/app/register/page.tsx,apps/api/src/auth/*,Student/User models,implemented
+QR check-in,apps/web/src/app/scan,page,apps/api/src/attendances/*,Activity/Attendance/Registration,implemented
+Uploads (presign/local),frontend upload helper,apps/api/src/uploads/*,uploads dir/S3,implemented
+Attendance approval,frontend admin UI,apps/api/src/attendances/*,Attendance model,implemented
+Hour aggregation,students transcript/summaries,apps/api/src/students/*,Registration/CreditTransfer/SpecialHourRequest,implemented
+Certificate PDF,certificate download UI,apps/api/src/certificates/*,Certificate model,implemented
+Downloads auth,NA,apps/api/src/uploads/downloads.controller.ts,NA,implemented
+Reports,apps/web/src/app/reports,apps/api/src/reports/*,NA,partial
+RBAC,UI role checks,apps/api/src/common/guards,User.role,implemented
