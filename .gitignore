@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+coverage/
+uploads/
+.DS_Store
+*.log
+*.zip
+*.docx
+*.exe
+npm-debug.log*
+yarn-error.log*
+/.github/workflows/*.retry
