@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -184,14 +183,6 @@ export default function RegisterPage() {
           </Link>
         </p>
       </Card>
-    </div>
-  );
-}
-        มีบัญชีแล้ว?{" "}
-        <Link href="/login" className="text-indigo-600 hover:underline">
-          เข้าสู่ระบบ
-        </Link>
-      </p>
     </div>
   );
 }
