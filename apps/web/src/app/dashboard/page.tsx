@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from 'next/dynamic'
 import { apiFetch, getToken } from "@/lib/api";
 import Link from "next/link";
 
@@ -122,6 +123,17 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+      <div>
+        <h2 className="text-lg font-semibold">คำแนะนำส่วนตัว</h2>
+        <div className="mt-3">
+          <AIPlaceholderClient />
+        </div>
+      </div>
     </div>
   );
 }
+
+const AIPlaceholderClient = dynamic(() => import('@/components/AIPlaceholder'), {
+  ssr: false,
+  loading: () => <div className="rounded-md bg-[var(--srru-surface)] p-4 text-sm muted-text">กำลังโหลดคำแนะนำ…</div>,
+})

@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, setToken } from "@/lib/api";
 import Link from "next/link";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,16 +35,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="mx-auto max-w-md rounded-2xl bg-white p-8 shadow-md ring-1 ring-slate-300 border border-slate-200 text-slate-900">
-      <h1 className="text-xl font-semibold">เข้าสู่ระบบ</h1>
-      <p className="mt-1 text-sm text-slate-700">ใช้รหัสนักศึกษาและรหัสผ่าน</p>
-      <form onSubmit={onSubmit} className="mt-6 space-y-4">
+    <div className="page-container mx-auto max-w-md">
+      <Card className="p-6">
+        <h1 className="text-xl font-semibold text-[var(--srru-green)]">เข้าสู่ระบบ</h1>
+        <p className="mt-1 text-sm text-[var(--srru-muted)]">ใช้รหัสนักศึกษาและรหัสผ่าน</p>
+        <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-700">
             รหัสนักศึกษา / ชื่อผู้ใช้
           </label>
-          <input
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+          <Input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -51,9 +54,8 @@ export default function LoginPage() {
           <label className="block text-sm font-medium text-slate-700">
             รหัสผ่าน
           </label>
-          <input
+          <Input
             type="password"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -64,20 +66,17 @@ export default function LoginPage() {
             {error}
           </p>
         )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-indigo-600 py-2 text-white hover:bg-indigo-700 disabled:opacity-60"
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "กำลังเข้าสู่ระบบ…" : "เข้าสู่ระบบ"}
-        </button>
+        </Button>
       </form>
-      <p className="mt-4 text-center text-sm text-slate-700">
-        ยังไม่มีบัญชี?{" "}
-        <Link href="/register" className="text-indigo-600 hover:underline">
-          สมัครสมาชิก
-        </Link>
-      </p>
+        <p className="mt-4 text-center text-sm text-[var(--srru-muted)]">
+          ยังไม่มีบัญชี?{" "}
+          <Link href="/register" className="text-[var(--srru-purple)] hover:underline">
+            สมัครสมาชิก
+          </Link>
+        </p>
+      </Card>
     </div>
   );
 }
