@@ -39,6 +39,14 @@ export class AmendmentsController {
     return this.amendments.create(user.sub, dto.registrationId, dto.reason, dto.proofPath);
   }
 
+  @Get('me')
+  @UseGuards(RolesGuard)
+  @Roles(Role.STUDENT)
+  @ApiOperation({ summary: 'My amendment requests' })
+  mine(@CurrentUser() user: JwtUser) {
+    return this.amendments.listMine(user.sub);
+  }
+
   @Get('pending')
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN, Role.COORDINATOR)

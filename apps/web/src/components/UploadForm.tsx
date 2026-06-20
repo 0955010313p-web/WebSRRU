@@ -7,7 +7,13 @@ import '../app/upload/upload.css'
 export default function UploadForm() {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<string | null>(null)
-  const [result, setResult] = useState<any>(null)
+  type UploadResult =
+    | { storage: 's3'; key: string; bucket: string }
+    | { storage: 'local'; path: string }
+    | { error: string }
+    | null
+
+  const [result, setResult] = useState<UploadResult>(null)
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState<number>(0)
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -55,7 +61,7 @@ export default function UploadForm() {
       setProgress(100)
       setStatus('อัปโหลดขึ้น S3 สำเร็จ')
       setResult({ storage: 's3', key: presign.key, bucket: presign.bucket })
-    } catch (err) {
+    } catch (_err) {
       try {
         // Fallback to local base64 upload
         setStatus('Presign ไม่สำเร็จ — ใช้ fallback ท้องถิ่น')

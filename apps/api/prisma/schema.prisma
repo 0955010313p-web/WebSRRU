@@ -111,6 +111,9 @@ model Activity {
   nature          ActivityNature
   level           ActivityLevel
   isMakeup        Boolean          @default(false) @map("is_makeup")
+  eligibleYears   Json?            @map("eligible_years")
+  studentProgram  StudentType?     @map("student_program")
+  leaderOnly      Boolean          @default(false) @map("leader_only")
   hours           Int
   maxParticipants Int?             @map("max_participants")
   startTime       DateTime         @map("start_time")

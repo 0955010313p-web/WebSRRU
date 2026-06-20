@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
+import { isLoggedIn } from "@/lib/auth-client";
 import Link from "next/link";
 
 type Activity = {
@@ -30,6 +31,10 @@ export default function ActivityDetailPage() {
   }, [id]);
 
   const register = async () => {
+    if (!isLoggedIn()) {
+      router.push(`/login?next=/activities/${id}`);
+      return;
+    }
     setMsg(null);
     setLoading(true);
     try {

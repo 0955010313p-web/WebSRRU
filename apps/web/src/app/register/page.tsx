@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, setToken } from "@/lib/api";
 import Link from "next/link";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -28,7 +31,7 @@ export default function RegisterPage() {
     // Client-side validation
     const v = validateForm(form);
     if (!v.valid) {
-      setError(v.message);
+      setError(v.message ?? 'กรุณาตรวจสอบข้อมูล');
       setLoading(false);
       return;
     }
@@ -68,13 +71,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl bg-white p-8 shadow-md ring-1 ring-slate-300 border border-slate-200 text-slate-900">
-      <h1 className="text-xl font-semibold">สมัครสมาชิก (นักศึกษา)</h1>
+    <div className="page-container mx-auto max-w-lg">
+      <Card className="p-6">
+      <h1 className="text-xl font-semibold text-[var(--srru-green)]">สมัครสมาชิก (นักศึกษา)</h1>
       <form onSubmit={onSubmit} className="mt-6 grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <label className="text-sm font-medium text-slate-700">รหัสนักศึกษา</label>
-          <input
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 bg-white text-slate-900"
+          <label className="text-sm font-medium text-[var(--srru-muted)]">รหัสนักศึกษา</label>
+          <Input
             value={form.studentCode}
             onChange={(e) => setForm({ ...form, studentCode: e.target.value })}
             required
@@ -82,9 +85,8 @@ export default function RegisterPage() {
         </div>
         <div className="sm:col-span-2">
           <label className="text-sm font-medium text-slate-700">รหัสผ่าน</label>
-          <input
+          <Input
             type="password"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 bg-white text-slate-900"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
@@ -92,18 +94,16 @@ export default function RegisterPage() {
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="text-sm font-medium text-slate-700">อีเมล (ไม่บังคับ)</label>
-          <input
+          <label className="text-sm font-medium text-[var(--srru-muted)]">อีเมล (ไม่บังคับ)</label>
+          <Input
             type="email"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 bg-white text-slate-900"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
         </div>
         <div>
           <label className="text-sm font-medium text-slate-700">ชื่อ</label>
-          <input
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 bg-white text-slate-900"
+          <Input
             value={form.firstName}
             onChange={(e) => setForm({ ...form, firstName: e.target.value })}
             required
@@ -111,8 +111,7 @@ export default function RegisterPage() {
         </div>
         <div>
           <label className="text-sm font-medium text-slate-700">นามสกุล</label>
-          <input
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 bg-white text-slate-900"
+          <Input
             value={form.lastName}
             onChange={(e) => setForm({ ...form, lastName: e.target.value })}
             required
@@ -120,8 +119,7 @@ export default function RegisterPage() {
         </div>
         <div className="sm:col-span-2">
           <label className="text-sm font-medium text-slate-700">คณะ</label>
-          <input
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 bg-white text-slate-900"
+          <Input
             value={form.faculty}
             onChange={(e) => setForm({ ...form, faculty: e.target.value })}
             required
@@ -129,8 +127,7 @@ export default function RegisterPage() {
         </div>
         <div className="sm:col-span-2">
           <label className="text-sm font-medium text-slate-700">สาขา</label>
-          <input
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 bg-white text-slate-900"
+          <Input
             value={form.major}
             onChange={(e) => setForm({ ...form, major: e.target.value })}
             required
@@ -174,21 +171,18 @@ export default function RegisterPage() {
           </p>
         )}
         <div className="sm:col-span-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 py-2 text-white hover:bg-indigo-700 disabled:opacity-60"
-          >
+          <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "กำลังสมัคร…" : "สมัครสมาชิก"}
-          </button>
+          </Button>
         </div>
       </form>
-      <p className="mt-4 text-center text-sm text-slate-700">
-        มีบัญชีแล้ว?{" "}
-        <Link href="/login" className="text-indigo-600 hover:underline">
-          เข้าสู่ระบบ
-        </Link>
-      </p>
+        <p className="mt-4 text-center text-sm text-[var(--srru-muted)]">
+          มีบัญชีแล้ว?{" "}
+          <Link href="/login" className="text-[var(--srru-purple)] hover:underline">
+            เข้าสู่ระบบ
+          </Link>
+        </p>
+      </Card>
     </div>
   );
 }

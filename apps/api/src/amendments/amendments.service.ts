@@ -20,6 +20,18 @@ export class AmendmentsService {
     });
   }
 
+  async listMine(userId: string) {
+    const student = await this.prisma.student.findFirst({
+      where: { userId, deletedAt: null },
+    });
+    if (!student) throw new NotFoundException('Student not found');
+    return this.prisma.amendmentRequest.findMany({
+      where: { registration: { studentId: student.id } },
+      include: { registration: { include: { activity: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   listPending(requester: { sub: string; role: Role }) {
     const staff: Role[] = [Role.ADMIN, Role.COORDINATOR];
     if (!staff.includes(requester.role)) {

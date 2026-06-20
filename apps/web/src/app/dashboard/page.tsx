@@ -3,6 +3,15 @@
 import { useEffect, useState } from "react";
 import { apiFetch, getToken } from "@/lib/api";
 import Link from "next/link";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+
+type YearTarget = {
+  year: number;
+  minActivities: number;
+  minHours: number;
+  isCurrentYear: boolean;
+};
 
 type Hours = {
   totalHours: number;
@@ -12,6 +21,10 @@ type Hours = {
   meetsHourTarget: boolean;
   meetsActivityCount: boolean;
   evaluationReady: boolean;
+  programLabel?: string;
+  yearLevel?: number;
+  yearlyTargets?: YearTarget[];
+  rulesReference?: string;
 };
 
 const API_BASE =
@@ -71,57 +84,80 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">แดชบอร์ดนักศึกษา</h1>
+      {hours.programLabel && (
+        <p className="text-sm text-[var(--srru-muted)]">
+          {hours.programLabel}
+          {hours.yearLevel ? ` · ชั้นปีที่ ${hours.yearLevel}` : ""}
+          {hours.rulesReference ? ` · ${hours.rulesReference}` : ""}
+        </p>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl bg-white p-6 shadow-md ring-1 ring-slate-300 border border-slate-200 text-slate-900">
-          <p className="text-sm text-slate-700">ชั่วโมงสะสมที่นับแล้ว</p>
+        <Card className="p-6">
+          <p className="text-sm text-[var(--srru-muted)]">ชั่วโมงสะสมที่นับแล้ว</p>
           <p className="mt-2 text-3xl font-semibold">
             {hours.totalHours} / {hours.targetHours}
           </p>
-        </div>
-        <div className="rounded-xl bg-white p-6 shadow-md ring-1 ring-slate-300 border border-slate-200 text-slate-900">
-          <p className="text-sm text-slate-700">จำนวนกิจกรรม (อนุมัติแล้ว)</p>
+        </Card>
+        <Card className="p-6">
+          <p className="text-sm text-[var(--srru-muted)]">จำนวนกิจกรรม (อนุมัติแล้ว)</p>
           <p className="mt-2 text-3xl font-semibold">
             {hours.approvedActivityCount} / {hours.minActivitiesRequired}
           </p>
-        </div>
+        </Card>
       </div>
-      <div className="rounded-xl bg-white p-6 shadow-md ring-1 ring-slate-300 border border-slate-200 text-slate-900">
+      {hours.yearlyTargets && hours.yearlyTargets.length > 0 && (
+        <Card className="p-6">
+          <p className="mb-3 text-sm font-medium text-slate-800">เป้าหมายรายชั้นปี (ตามประกาศ)</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="text-[var(--srru-muted)]">
+                  <th className="py-2 pr-4">ชั้นปี</th>
+                  <th className="py-2 pr-4">กิจกรรมขั้นต่ำ</th>
+                  <th className="py-2">ชั่วโมงขั้นต่ำ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {hours.yearlyTargets.map((y) => (
+                  <tr
+                    key={y.year}
+                    className={y.isCurrentYear ? "bg-[var(--srru-green-10)] font-medium" : ""}
+                  >
+                    <td className="py-2 pr-4">ปี {y.year}</td>
+                    <td className="py-2 pr-4">{y.minActivities}</td>
+                    <td className="py-2">{y.minHours}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+      <Card className="p-6">
         <p className="font-medium">
           สถานะเกณฑ์สำเร็จการศึกษา (เบื้องต้น):{" "}
-          <span
-            className={
-              hours.evaluationReady ? "text-emerald-600" : "text-amber-600"
-            }
-          >
+          <span className={hours.evaluationReady ? "text-[var(--srru-green)]" : "text-[var(--srru-yellow)]"}>
             {hours.evaluationReady ? "ครบเงื่อนไขหลัก" : "ยังไม่ครบเงื่อนไข"}
           </span>
         </p>
-        <ul className="mt-2 list-inside list-disc text-sm text-slate-700">
+        <ul className="mt-2 list-inside list-disc text-sm text-[var(--srru-muted)]">
           <li>ชั่วโมง: {hours.meetsHourTarget ? "ผ่าน" : "ยังไม่ผ่าน"}</li>
           <li>
-            จำนวนกิจกรรม:{" "}
+            จำนวนกิจกรรม: {" "}
             {hours.meetsActivityCount ? "ผ่าน" : "ยังไม่ผ่าน"}
           </li>
         </ul>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link
-            href="/activities"
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white"
-          >
-            ไปลงทะเบียนกิจกรรม
+          <Link href="/activities">
+            <Button>ไปลงทะเบียนกิจกรรม</Button>
           </Link>
           {hours.evaluationReady && (
-            <button
-              type="button"
-              onClick={downloadCertificate}
-              disabled={certLoading}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50 disabled:opacity-50"
-            >
+            <Button type="button" onClick={downloadCertificate} disabled={certLoading}>
               {certLoading ? "กำลังสร้างไฟล์…" : "ดาวน์โหลดใบรับรอง (PDF)"}
-            </button>
+            </Button>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

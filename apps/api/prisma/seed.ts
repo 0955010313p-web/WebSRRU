@@ -1,5 +1,11 @@
-import { PrismaClient, Role, ActivityStatus, ActivityCategory, ActivityNature, ActivityLevel, StudentType } from '@prisma/client';
+import {
+  PrismaClient,
+  Role,
+  ActivityStatus,
+  StudentType,
+} from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { SRRU_ACTIVITY_CATALOG } from '../src/common/srru-activity-catalog';
 
 const prisma = new PrismaClient();
 
@@ -29,7 +35,7 @@ async function main() {
     },
   });
 
-  const execUser = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { username: 'executive' },
     update: {},
     create: {
@@ -63,35 +69,66 @@ async function main() {
     include: { student: true },
   });
 
-  const start = new Date();
-  start.setDate(start.getDate() + 1);
-  const end = new Date(start);
-  end.setHours(end.getHours() + 3);
+  const baseStart = new Date();
+  baseStart.setDate(baseStart.getDate() + 7);
 
-  const activity = await prisma.activity.create({
-    data: {
-      title: 'กิจกรรมปฐมนิเทศนักศึกษา (ตัวอย่าง)',
-      description:
-        'กิจกรรมตัวอย่างสำหรับทดสอบระบบลงทะเบียนและสแกน QR เช็คชื่อ',
-      category: ActivityCategory.ACADEMIC,
-      nature: ActivityNature.CORE_REQUIRED,
-      level: ActivityLevel.UNIVERSITY,
-      hours: 5,
-      maxParticipants: 200,
-      startTime: start,
-      endTime: end,
-      status: ActivityStatus.PUBLISHED,
-      supervisorId: coordinator.id,
-    },
-  });
+  let created = 0;
+  for (let i = 0; i < SRRU_ACTIVITY_CATALOG.length; i++) {
+    const item = SRRU_ACTIVITY_CATALOG[i];
+    const start = new Date(baseStart);
+    start.setDate(start.getDate() + i * 3);
+    const end = new Date(start);
+    end.setHours(end.getHours() + 3);
+
+    const existing = await prisma.activity.findFirst({
+      where: { title: item.title, deletedAt: null },
+    });
+    if (existing) {
+      await prisma.activity.update({
+        where: { id: existing.id },
+        data: {
+          description: item.description,
+          category: item.category,
+          nature: item.nature,
+          level: item.level,
+          hours: item.hours,
+          eligibleYears: item.eligibleYears,
+          studentProgram: item.studentProgram,
+          leaderOnly: item.leaderOnly ?? false,
+          status: ActivityStatus.PUBLISHED,
+        },
+      });
+      continue;
+    }
+
+    await prisma.activity.create({
+      data: {
+        title: item.title,
+        description: item.description,
+        category: item.category,
+        nature: item.nature,
+        level: item.level,
+        hours: item.hours,
+        eligibleYears: item.eligibleYears,
+        studentProgram: item.studentProgram,
+        leaderOnly: item.leaderOnly ?? false,
+        maxParticipants: 500,
+        startTime: start,
+        endTime: end,
+        status: ActivityStatus.PUBLISHED,
+        supervisorId: coordinator.id,
+      },
+    });
+    created++;
+  }
 
   // eslint-disable-next-line no-console
   console.log('Seed complete.', {
     admin: admin.username,
     coordinator: coordinator.username,
-    executive: execUser.username,
     student: studentUser.username,
-    activityId: activity.id,
+    activitiesSeeded: SRRU_ACTIVITY_CATALOG.length,
+    activitiesCreated: created,
   });
 }
 

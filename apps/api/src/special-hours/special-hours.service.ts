@@ -25,6 +25,17 @@ export class SpecialHoursService {
     });
   }
 
+  async listMine(userId: string) {
+    const student = await this.prisma.student.findFirst({
+      where: { userId, deletedAt: null },
+    });
+    if (!student) throw new NotFoundException('Student not found');
+    return this.prisma.specialHourRequest.findMany({
+      where: { studentId: student.id },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   listPending(requester: { role: Role }) {
     const staff: Role[] = [Role.ADMIN, Role.COORDINATOR];
     if (!staff.includes(requester.role)) {

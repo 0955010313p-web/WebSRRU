@@ -15,7 +15,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { ActivityStatus, Role } from '@prisma/client';
+import { ActivityStatus, Role, StudentType } from '@prisma/client';
 import { CurrentUser, JwtUser } from '../common/decorators/current-user.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -28,12 +28,26 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 export class ActivitiesController {
   constructor(private readonly activities: ActivitiesService) {}
 
+  @Get('rules')
+  @ApiOperation({ summary: 'SRRU graduation rules and activity hour policy' })
+  rules() {
+    return this.activities.graduationRules();
+  }
+
   @Get()
   @ApiOperation({ summary: 'List activities (published by default)' })
   @ApiQuery({ name: 'status', required: false, enum: ActivityStatus })
-  list(@Query('status') status?: ActivityStatus) {
+  @ApiQuery({ name: 'yearLevel', required: false, type: Number })
+  @ApiQuery({ name: 'studentType', required: false, enum: StudentType })
+  list(
+    @Query('status') status?: ActivityStatus,
+    @Query('yearLevel') yearLevel?: string,
+    @Query('studentType') studentType?: StudentType,
+  ) {
     return this.activities.listPublic({
       status: status ?? ActivityStatus.PUBLISHED,
+      yearLevel: yearLevel ? Number(yearLevel) : undefined,
+      studentType,
     });
   }
 

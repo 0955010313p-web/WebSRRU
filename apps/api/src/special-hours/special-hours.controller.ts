@@ -46,6 +46,14 @@ export class SpecialHoursController {
     return this.special.create(user.sub, dto);
   }
 
+  @Get('me')
+  @UseGuards(RolesGuard)
+  @Roles(Role.STUDENT)
+  @ApiOperation({ summary: 'My special hour requests' })
+  mine(@CurrentUser() user: JwtUser) {
+    return this.special.listMine(user.sub);
+  }
+
   @Get('pending')
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN, Role.COORDINATOR)

@@ -4,8 +4,10 @@ import {
   ActivityLevel,
   ActivityNature,
   ActivityStatus,
+  StudentType,
 } from '@prisma/client';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
@@ -43,6 +45,21 @@ export class CreateActivityDto {
   @IsOptional()
   @IsBoolean()
   isMakeup?: boolean;
+
+  @ApiPropertyOptional({ type: [Number], example: [1, 2, 3, 4] })
+  @IsOptional()
+  @IsArray()
+  eligibleYears?: number[];
+
+  @ApiPropertyOptional({ enum: StudentType })
+  @IsOptional()
+  @IsEnum(StudentType)
+  studentProgram?: StudentType;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  leaderOnly?: boolean;
 
   @ApiProperty({ minimum: 1 })
   @IsInt()

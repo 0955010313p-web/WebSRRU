@@ -5,6 +5,7 @@ import {
   StudentType,
 } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { GRADUATION_RULES } from '../common/srru-graduation-rules';
 
 @Injectable()
 export class StudentsService {
@@ -60,12 +61,22 @@ export class StudentsService {
     );
 
     const totalHours = activityHours + transferHours + specialHours;
-    const targetHours = student.studentType === StudentType.REGULAR ? 100 : 50;
-    const minActivities = student.studentType === StudentType.REGULAR ? 25 : 4;
+    const programRules = GRADUATION_RULES.programs[student.studentType];
+    const targetHours = programRules.minHours;
+    const minActivities = programRules.minActivities;
+
+    const yearlyTargets = programRules.yearly.map((y) => ({
+      year: y.year,
+      minActivities: y.minActivities,
+      minHours: y.minHours,
+      isCurrentYear: student.yearLevel === y.year,
+    }));
 
     return {
       studentId,
+      yearLevel: student.yearLevel,
       studentType: student.studentType,
+      programLabel: programRules.label,
       approvedActivityCount: activityCount,
       minActivitiesRequired: minActivities,
       activityHours,
@@ -77,6 +88,8 @@ export class StudentsService {
       meetsActivityCount: activityCount >= minActivities,
       evaluationReady:
         totalHours >= targetHours && activityCount >= minActivities,
+      yearlyTargets,
+      rulesReference: GRADUATION_RULES.announcement,
     };
   }
 

@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ActivityStatus, Prisma } from '@prisma/client';
+import { ActivityStatus, Prisma, StudentType } from '@prisma/client';
+import { GRADUATION_RULES } from '../common/srru-graduation-rules';
+import { SRRU_ACTIVITY_CATALOG } from '../common/srru-activity-catalog';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
@@ -14,17 +16,48 @@ export class ActivitiesService {
     return rest;
   }
 
-  listPublic(filters?: { status?: ActivityStatus; level?: string }) {
+  graduationRules() {
+    return {
+      ...GRADUATION_RULES,
+      catalogCount: SRRU_ACTIVITY_CATALOG.length,
+    };
+  }
+
+  listPublic(filters?: {
+    status?: ActivityStatus;
+    level?: string;
+    yearLevel?: number;
+    studentType?: StudentType;
+  }) {
     const where: Prisma.ActivityWhereInput = { deletedAt: null };
     if (filters?.status) where.status = filters.status;
     if (filters?.level) where.level = filters.level as never;
+    if (filters?.studentType) {
+      where.OR = [
+        { studentProgram: null },
+        { studentProgram: filters.studentType },
+      ];
+    }
     return this.prisma.activity
       .findMany({
         where,
-        orderBy: { startTime: 'asc' },
+        orderBy: [{ nature: 'asc' }, { startTime: 'asc' }],
         include: { supervisor: { select: { id: true, username: true } } },
       })
-      .then((rows) => rows.map((r) => this.stripQrSecret(r)));
+      .then((rows) => {
+        const year = filters?.yearLevel;
+        const filtered =
+          year === undefined
+            ? rows
+            : rows.filter((r) => {
+                const years = r.eligibleYears as number[] | null;
+                if (!years || !Array.isArray(years) || years.length === 0) {
+                  return true;
+                }
+                return years.includes(year);
+              });
+        return filtered.map((r) => this.stripQrSecret(r));
+      });
   }
 
   listManaged(filters?: { status?: ActivityStatus }) {
@@ -69,6 +102,9 @@ export class ActivitiesService {
         nature: dto.nature,
         level: dto.level,
         isMakeup: dto.isMakeup ?? false,
+        eligibleYears: dto.eligibleYears ?? [1, 2, 3, 4],
+        studentProgram: dto.studentProgram ?? null,
+        leaderOnly: dto.leaderOnly ?? false,
         hours: dto.hours,
         maxParticipants: dto.maxParticipants,
         startTime: new Date(dto.startTime),

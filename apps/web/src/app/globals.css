@@ -1,26 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
 @import "tailwindcss";
 
+/* SRRU brand theme — เขียว ม่วง ขาว (อ่านง่าย ไม่สว่างจ้า) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #eef4f0;
+  --foreground: #1a2332;
+
+  --srru-green: #1F8A4C;
+  --srru-green-dark: #166936;
+  --srru-green-10: #e4f3ea;
+  --srru-green-20: #c8e8d4;
+  --srru-purple: #6B3FA0;
+  --srru-purple-dark: #563080;
+  --srru-purple-10: #ede6f5;
+  --srru-purple-20: #d9cbee;
+  --srru-yellow: #F6C84C;
+  --srru-surface: #eef4f0;
+  --srru-sidebar: #f0f8f3;
+  --srru-header: #f3eff8;
+  --srru-card: #fafcfa;
+  --srru-card-border: #c5ddd0;
+  --srru-muted: #4b5563;
+  --srru-muted-10: #e8ecef;
+
+  --motion-short: 120ms;
+  --motion-medium: 180ms;
+
+  --font-heading: 'Sarabun', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
+  --font-body: 'Sarabun', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-heading);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Micro-interaction utilities */
+.ui-btn {
+  transition: transform var(--motion-short) ease, box-shadow var(--motion-short) ease, background-color var(--motion-short) ease;
+}
+.ui-btn:active { transform: scale(0.985); }
+
+.ui-card {
+  transition: transform var(--motion-medium) ease, box-shadow var(--motion-medium) ease;
+}
+@media (hover: hover) {
+  .ui-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(31, 138, 76, 0.1);
+  }
+}
+
+:where(:focus, :focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--srru-green) 60%, transparent);
+  outline-offset: 3px;
+}
+
+.muted-text { color: var(--srru-muted); }
+.brand-link { color: var(--srru-purple); font-weight: 600; }
+.brand-link:hover { text-decoration: underline; }
+
+.page-container { max-width: 980px; margin: 0 auto; padding: 1rem; }
+
+/* กล่องข้อความอ่านง่าย */
+.content-panel {
+  background: var(--srru-card);
+  border: 1px solid var(--srru-card-border);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.section-title {
+  color: var(--srru-green-dark);
+  font-weight: 700;
+}
+
+.section-subtitle {
+  color: var(--srru-muted);
+  line-height: 1.6;
 }
