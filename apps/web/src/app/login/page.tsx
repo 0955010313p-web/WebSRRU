@@ -39,7 +39,7 @@ function LoginForm() {
   return (
     <div className="page-container mx-auto max-w-md">
       <Card className="p-6">
-        <h1 className="text-xl font-semibold text-[var(--srru-green)]">เข้าสู่ระบบ</h1>
+        <h1 className="text-xl font-bold text-[var(--srru-purple-deep)]">เข้าสู่ระบบ</h1>
         <p className="mt-1 text-sm text-[var(--srru-muted)]">ใช้รหัสนักศึกษาและรหัสผ่าน</p>
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <div>

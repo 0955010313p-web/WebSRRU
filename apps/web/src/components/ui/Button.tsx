@@ -8,12 +8,12 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export const Button = ({ variant = "primary", className, ...props }: ButtonProps) => {
-  const base = "ui-btn inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-colors disabled:opacity-50";
+  const base = "ui-btn inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-colors disabled:opacity-50";
   const variants: Record<string, string> = {
     primary:
-      "bg-[var(--srru-green)] text-white hover:bg-[var(--srru-green-dark)] focus-visible:ring-[var(--srru-green)] shadow-sm",
+      "bg-[var(--srru-green)] text-white hover:bg-[var(--srru-green-dark)] focus-visible:ring-[var(--srru-green)] shadow-md",
     secondary:
-      "bg-[var(--srru-card)] text-[var(--srru-purple)] border border-[var(--srru-purple)] hover:bg-[var(--srru-purple-10)] focus-visible:ring-[var(--srru-purple)]",
+      "bg-white text-[var(--srru-purple)] border-2 border-[var(--srru-purple)] hover:bg-[var(--srru-purple-10)] focus-visible:ring-[var(--srru-purple)]",
     ghost:
       "bg-transparent text-[var(--srru-muted)] hover:bg-[var(--srru-muted-10)] focus-visible:ring-[var(--srru-muted)]",
   };

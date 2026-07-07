@@ -3,7 +3,7 @@ import { HomeQuickSections } from "@/components/home/HomeQuickSections";
 
 export default function Home() {
   return (
-    <div className="mx-auto flex max-w-6xl flex-col justify-center gap-6">
+    <div className="mx-auto max-w-6xl">
       <HomeFeaturedCarousel />
       <HomeQuickSections />
     </div>

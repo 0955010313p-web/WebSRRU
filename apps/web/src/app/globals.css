@@ -1,33 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
-/* SRRU brand theme — เขียว ม่วง ขาว (อ่านง่าย ไม่สว่างจ้า) */
+/* SRRU official-style theme — ม่วงเข้ม · เขียว · ขาว (แบบระบบมหาวิทยาลัย) */
 :root {
-  --background: #eef4f0;
-  --foreground: #1a2332;
+  --background: #e8eaef;
+  --foreground: #1e2433;
 
-  --srru-green: #1F8A4C;
+  --srru-purple-deep: #4a2d7a;
+  --srru-purple: #6b3fa0;
+  --srru-purple-mid: #7d52b8;
+  --srru-purple-light: #9a72cc;
+  --srru-purple-active: rgba(255, 255, 255, 0.16);
+  --srru-purple-10: #f0ebf8;
+  --srru-purple-20: #ddd0f0;
+
+  --srru-green: #1f8a4c;
+  --srru-green-bright: #22a55a;
   --srru-green-dark: #166936;
-  --srru-green-10: #e4f3ea;
+  --srru-green-10: #e8f5ed;
   --srru-green-20: #c8e8d4;
-  --srru-purple: #6B3FA0;
-  --srru-purple-dark: #563080;
-  --srru-purple-10: #ede6f5;
-  --srru-purple-20: #d9cbee;
-  --srru-yellow: #F6C84C;
-  --srru-surface: #eef4f0;
-  --srru-sidebar: #f0f8f3;
-  --srru-header: #f3eff8;
-  --srru-card: #fafcfa;
-  --srru-card-border: #c5ddd0;
-  --srru-muted: #4b5563;
-  --srru-muted-10: #e8ecef;
+
+  --srru-yellow: #f6c84c;
+  --srru-coral: #e8879a;
+
+  --srru-surface: #e8eaef;
+  --srru-sidebar: #4a2d7a;
+  --srru-header: #ffffff;
+  --srru-card: #ffffff;
+  --srru-card-border: #dde1ea;
+  --srru-card-shadow: 0 4px 20px rgba(74, 45, 122, 0.1);
+  --srru-card-shadow-lg: 0 8px 32px rgba(74, 45, 122, 0.14);
+
+  --srru-muted: #5c6478;
+  --srru-muted-10: #eef0f4;
+
+  --srru-hero-gradient: linear-gradient(
+    115deg,
+    #4a2d7a 0%,
+    #6b3fa0 38%,
+    #a8558a 68%,
+    #e8879a 100%
+  );
 
   --motion-short: 120ms;
-  --motion-medium: 180ms;
+  --motion-medium: 200ms;
 
-  --font-heading: 'Sarabun', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
-  --font-body: 'Sarabun', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
+  --font-heading: 'Sarabun', system-ui, -apple-system, 'Segoe UI', 'Noto Sans Thai', sans-serif;
+  --font-body: 'Sarabun', system-ui, -apple-system, 'Segoe UI', 'Noto Sans Thai', sans-serif;
 }
 
 @theme inline {
@@ -48,7 +67,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Micro-interaction utilities */
 .ui-btn {
   transition: transform var(--motion-short) ease, box-shadow var(--motion-short) ease, background-color var(--motion-short) ease;
 }
@@ -59,13 +77,13 @@ body {
 }
 @media (hover: hover) {
   .ui-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(31, 138, 76, 0.1);
+    transform: translateY(-3px);
+    box-shadow: var(--srru-card-shadow-lg);
   }
 }
 
 :where(:focus, :focus-visible) {
-  outline: 3px solid color-mix(in srgb, var(--srru-green) 60%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--srru-purple) 55%, transparent);
   outline-offset: 3px;
 }
 
@@ -75,20 +93,32 @@ body {
 
 .page-container { max-width: 980px; margin: 0 auto; padding: 1rem; }
 
-/* กล่องข้อความอ่านง่าย */
 .content-panel {
   background: var(--srru-card);
   border: 1px solid var(--srru-card-border);
   border-radius: 1rem;
   padding: 1.25rem 1.5rem;
+  box-shadow: var(--srru-card-shadow);
 }
 
 .section-title {
-  color: var(--srru-green-dark);
+  color: var(--srru-purple-deep);
   font-weight: 700;
+  font-size: 1.125rem;
 }
 
 .section-subtitle {
   color: var(--srru-muted);
   line-height: 1.6;
+}
+
+.hero-gradient {
+  background: var(--srru-hero-gradient);
+}
+
+.nav-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  flex-shrink: 0;
 }
